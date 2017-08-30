@@ -24,9 +24,12 @@ static int __e_d_data(char *k, int mode, unsigned char *s, int l)
 
 
 static int __cal_recv(int sfd, int t, unsigned char *s, int fixlen, int en_mode)
-{	
-	if(lmt_net_fixed_length_read(sfd, t, 0, s, fixlen) != fixlen)
+{
+	int ret = -1;
+	
+	if((ret = lmt_net_fixed_length_read(sfd, t, 0, s, fixlen)) != fixlen)
 	{
+		lmt_log(LMT_LOG_WARN, "Call lmt_net_fixed_length_read return:[%d], but fixlen [%d] %s \n", ret, fixlen); 
 		return -1;
 	}
 
@@ -122,6 +125,8 @@ static int __Socks5_Svr_Requests_Do(int sfd, unsigned char szIP[], unsigned shor
 		lmt_log(LMT_LOG_ERROR, "Socks5 requests do fail:recv 1..5 chars error\n");
 		return -1;
 	}
+	
+	lmt_log(LMT_LOG_DEBUG, "The SOCKS request Cmd is [%02X]\n", sbuff[1]);
 	
 	if(sbuff[3] == 0x01)//IP Addr
 	{
