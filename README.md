@@ -8,10 +8,15 @@ ubuntu@ip-172-31-19-74:~/NPRX$ ./nprx
         NPRX Tool(ah:linyinma@gmail.com): V2.0.0
 
 Usage: nprx [select] [para1] [para2].....
+
 Call Module_Socks5_Direct:  1 lsport isencrypt aclfile
+
 Call Module_Socks5_Tunnel:  2 bip bport isencrypt
+
 Call Module_Stream_Direct:  3 lsport aclfile isencrypt cip cport
+
 Call Module_Stream_Tunnel:  4 bip bport isencrypt cip cport
+
 Call Module_Tunnel:  5 liport aclip isencrypt leport protocol aclfile
 
 
