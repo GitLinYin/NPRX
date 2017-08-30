@@ -69,7 +69,7 @@ int main(int argc, char **argv)
 	{
 		if(argc != 6) return __PrintUsageInfo();
 		
-		return Module_Tunnel(atoi(argv[0]),  __formt_null(argv[1]),  atoi(argv[2]), atoi(argv[3]), , __formt_null(argv[4]), __formt_null(argv[5]));
+		return Module_Tunnel(atoi(argv[0]),  __formt_null(argv[1]),  atoi(argv[2]), atoi(argv[3]),__formt_null(argv[4]), __formt_null(argv[5]));
 	}
 	
 	return 0;
