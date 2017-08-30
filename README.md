@@ -17,10 +17,13 @@ Call Module_Tunnel:  5 liport aclip isencrypt leport protocol aclfile
 
 ---------------------------------------------------------------------------------
 Case1 （ Socks5 server ）：  nprx 1 0 null 
+
 Case2 （ ShadowS Socks5 server）：  nprx 1 1 null
+
 Case3 （ ShadowS Socks5 Client）：  nprx 3 null 1 114.xxx.xxx.xxx  8801  (ShadowS Socks5 server ip and port)
 
 ----------------------------------------------------------------------------------------
 case4 （tunnel server， install public network env） ：nprx 5 8001 null 0 8002 http null
+
 case5 （tunnel server， install private network env） ：nprx 4 114.xxx.xxx.xxx  8001 0  192.168.xx.xx 22
 
