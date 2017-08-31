@@ -129,15 +129,15 @@ static int __Socks5_Svr_Requests_Do(int sfd, unsigned char szIP[], unsigned shor
 		return -1;
 	}
 	
-	lmt_log(LMT_LOG_DEBUG, "The SOCKS request Cmd is [%02X]\n", sbuff[1]);
-	
 	if(sbuff[3] == 0x01)//IP Addr
 	{
 		iDstType = 0;
+		lmt_log(LMT_LOG_DEBUG, "The SOCKS request Cmd is [%02X]. Addr is IP\n", sbuff[1]);
 	}
 	else if(sbuff[3] == 0x03)//url
 	{
 		iDstType = 1;
+		lmt_log(LMT_LOG_DEBUG, "The SOCKS request Cmd is [%02X]. Addr is Url\n", sbuff[1]);
 	}
 	else
 	{
