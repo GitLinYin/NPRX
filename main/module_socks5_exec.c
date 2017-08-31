@@ -29,7 +29,10 @@ static int __cal_recv(int sfd, int t, unsigned char *s, int fixlen, int en_mode)
 	
 	if((ret = lmt_net_fixed_length_read(sfd, t, 0, s, fixlen)) != fixlen)
 	{
-		lmt_log(LMT_LOG_WARN, "Call lmt_net_fixed_length_read return:[%d], but fixlen [%d] %s \n", ret, fixlen); 
+		if(ret > 0) s[ret] = 0;
+		else s[0] = 0;
+		
+		lmt_log(LMT_LOG_WARN, "Call lmt_net_fixed_length_read return:[%d], but fixlen [%d]:%s \n", ret, fixlen, s); 
 		return -1;
 	}
 
