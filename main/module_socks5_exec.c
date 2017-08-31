@@ -132,11 +132,18 @@ static int __Socks5_Svr_Requests_Do(int sfd, unsigned char szIP[], unsigned shor
 	if(sbuff[3] == 0x01)//IP Addr
 	{
 		iDstType = 0;
+		iDstLen = 3;
 		lmt_log(LMT_LOG_DEBUG, "The SOCKS request Cmd is [%02X]. Addr is IP\n", sbuff[1]);
 	}
 	else if(sbuff[3] == 0x03)//url
 	{
 		iDstType = 1;
+		iDstLen = sbuff[4];
+		if(iDstLen < 1 || iDstLen > 1021)
+		{
+			lmt_log(LMT_LOG_ERROR, "Socks5 requests do fail: DST.ADDR len [%d] more maxlen [%d]\n", iDstLen, 1021);
+			return -1;
+		}
 		lmt_log(LMT_LOG_DEBUG, "The SOCKS request Cmd is [%02X]. Addr is Url\n", sbuff[1]);
 	}
 	else
@@ -145,33 +152,33 @@ static int __Socks5_Svr_Requests_Do(int sfd, unsigned char szIP[], unsigned shor
 		return -1;
 	}
 
-	iDstLen = sbuff[4];
-	if(iDstLen < 1 || iDstLen > 1021)
-	{
-		lmt_log(LMT_LOG_ERROR, "Socks5 requests do fail: DST.ADDR len [%d] more maxlen [%d]\n", iDstLen, 1021);
-		return -1;
-	}
-
-	if(__cal_recv(sfd, 5, sbuff, iDstLen + 2, en_mode))
+	if(__cal_recv(sfd, 5, sbuff + 5, iDstLen + 2, en_mode))
 	{
 		lmt_log(LMT_LOG_ERROR, "Socks5 requests do fail: read DST.ADDR fail\n");
 		return -1;	
 	}
 	
-
-	memcpy(sdst, sbuff, iDstLen); sdst[iDstLen] = 0;
-	
-	
-	*usDst= (sbuff[iDstLen]<< 8) +sbuff[iDstLen+1];
-
-	
-	lmt_log(LMT_LOG_INFO, "SOCKS5 ---> Dst-Host:[%s:%d]\n", sdst, *usDst);
-
-	if(lmt_net_url2ip(sdst, szIP))
+	if(iDstType == 0)//IP
 	{
-		lmt_log(LMT_LOG_ERROR, "Call lmt_net_url2ip(%s) fail\n", sdst);
-		return -1;
+		unsigned int *piIp =  (unsigned int *)(sbuff + 4);
+		unsigned int uIP = ntohl(*piIp);
+
+		sprintf(szIP, "%d.%d.%d.%d", (uIP >> 24)&0xFF, (uIP >> 16)&0xFF, (uIP >> 8)&0xFF, uIP&0xFF);
+		
+		sdst[0] = 0;
 	}
+	else	//url
+	{
+		memcpy(sdst, sbuff + 5, iDstLen); sdst[iDstLen] = 0;
+		if(lmt_net_url2ip(sdst, szIP))
+		{
+			lmt_log(LMT_LOG_ERROR, "Call lmt_net_url2ip(%s) fail\n", sdst);
+			return -1;
+		}
+	}
+	*usDst= (sbuff[iDstLen + 5] << 8) +sbuff[iDstLen+5+1];
+	
+	lmt_log(LMT_LOG_INFO, "SOCKS5 --->URL:%s,IP-Port:[%s:%d]\n",sdst, szIP, *usDst);
 
 	return 0;
 }
